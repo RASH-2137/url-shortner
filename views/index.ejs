@@ -290,7 +290,7 @@
                       <td>
                         <div class="short-link">
                           <a href="<%= baseUrl %>/<%= shortUrl.short %>" target="_blank" class="short-code">
-                            <%= baseUrl %>/<%= shortUrl.short %>
+                            <%= shortUrl.short %>
                           </a>
                         </div>
                       </td>
@@ -298,8 +298,8 @@
                         <span class="badge badge-clicks"><%= shortUrl.clicks %></span>
                       </td>
                       <td>
-                        <button class="copy-btn" onclick="copyToClipboard('<%= baseUrl %>/<%= shortUrl.short %>')">
-                          <i class="fas fa-copy"></i> Copy
+                        <button class="copy-btn" onclick="copyToClipboard('<%= shortUrl.short %>')">
+                          <i class="fas fa-copy"></i> Copy Code
                         </button>
                         <button class="delete-btn" onclick="deleteUrl('<%= shortUrl._id %>')">
                           <i class="fas fa-trash"></i> Delete
@@ -362,9 +362,10 @@
     })
 
     // Copy to clipboard function
-    function copyToClipboard(text) {
-      navigator.clipboard.writeText(text).then(() => {
-        showSuccessMessage('✓ Link copied to clipboard!')
+    function copyToClipboard(code) {
+      const fullLink = '<%= baseUrl %>/' + code;
+      navigator.clipboard.writeText(fullLink).then(() => {
+        showSuccessMessage('✓ Full link copied: ' + fullLink)
       }).catch(err => {
         console.error('Failed to copy:', err)
         showSuccessMessage('Failed to copy', 'error')

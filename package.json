@@ -24,6 +24,7 @@
   "dependencies": {
     "ejs": "^3.0.1",
     "express": "^4.17.1",
+    "express-session": "^1.17.3",
     "mongoose": "^5.9.1",
     "shortid": "^2.2.15",
     "dotenv": "^10.0.0"
