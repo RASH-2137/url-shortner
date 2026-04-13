@@ -72,65 +72,53 @@ app.get('/', async (req, res) => {
   }
 })
 
-// POST - Create new short URL
 app.post('/shortUrls', async (req, res) => {
   try {
     const { fullUrl } = req.body
 
     // Validation
     if (!fullUrl || typeof fullUrl !== 'string') {
-      return res.status(400).json({ error: 'URL is required' })
+      return res.redirect('/')
     }
 
     if (!isValidUrl(fullUrl)) {
-      return res.status(400).json({ error: 'Invalid URL format' })
+      return res.redirect('/')
     }
 
     // Check for duplicates in database
     const existing = await ShortUrl.findOne({ full: fullUrl })
     if (existing) {
-      // Reuse existing short code
       const urlData = {
         _id: existing._id,
         full: existing.full,
         short: existing.short,
         clicks: existing.clicks
       }
-      
-      // Add to current session
+
       req.session.userUrls.push(urlData)
-      
+
       console.log(`✓ Reused short URL: ${existing.short} -> ${fullUrl}`)
-      return res.status(201).json({
-        success: true,
-        full: existing.full,
-        short: existing.short,
-        shortUrl: existing.short
-      })
+      return res.redirect('/')
     }
 
     // Create new short URL
     const shortUrl = await ShortUrl.create({ full: fullUrl })
     console.log(`✓ Created short URL: ${shortUrl.short} -> ${fullUrl}`)
 
-    // Add to current session
     const urlData = {
       _id: shortUrl._id,
       full: shortUrl.full,
       short: shortUrl.short,
       clicks: shortUrl.clicks
     }
+
     req.session.userUrls.push(urlData)
 
-    res.status(201).json({
-      success: true,
-      full: shortUrl.full,
-      short: shortUrl.short,
-      shortUrl: shortUrl.short
-    })
+    return res.redirect('/')
+    
   } catch (err) {
     console.error('Error creating short URL:', err)
-    res.status(500).json({ error: 'Failed to create short URL' })
+    return res.redirect('/')
   }
 })
 
